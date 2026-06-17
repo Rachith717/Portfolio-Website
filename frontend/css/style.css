@@ -70,8 +70,14 @@ nav a:hover{
 }
 
 .hero-content h1{
-    font-size:4rem;
-    margin-bottom:20px;
+    font-size: clamp(3rem, 8vw, 6rem);
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    text-shadow:
+        0 0 15px rgba(0,0,0,0.5);
 }
 
 .hero-content p{
@@ -252,12 +258,15 @@ nav a:hover{
     gap:25px;
 }
 .photo-card{
-
     overflow:hidden;
 
     border-radius:15px;
 
     background:#1b4332;
+
+    transition:0.3s;
+
+    cursor:pointer;
 }
 .photo-card img{
 
@@ -268,6 +277,12 @@ nav a:hover{
     object-fit:cover;
 
     transition:0.4s;
+}
+.photo-card:hover{
+    transform:translateY(-10px);
+
+    box-shadow:
+    0 15px 30px rgba(0,0,0,0.3);
 }
 .photo-card:hover img{
 
@@ -346,4 +361,185 @@ nav a:hover{
     margin-bottom:12px;
 
     line-height:1.6;
+}
+.about-page,
+.gear-page,
+.contact-page{
+    padding:80px 10%;
+    text-align:center;
+}
+.profile-image{
+    width:200px;
+    height:200px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:30px;
+}
+.gear-card{
+    background:#1b4332;
+    padding:20px;
+    margin:20px auto;
+    max-width:600px;
+    border-radius:12px;
+}
+footer{
+    background:#0b251d;
+    text-align:center;
+    padding:20px;
+    margin-top:50px;
+}
+@media (max-width:768px){
+
+    nav{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    nav ul{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .hero-content h1{
+        font-size:2.5rem;
+    }
+}
+.music-btn{
+    position: fixed;
+    bottom: -680px;
+    right: 25px;
+
+    width: 60px;
+    height: 60px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(82, 183, 136, 0.15);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    color: white;
+    font-size: 1.5rem;
+
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: all 0.3s ease;
+
+    z-index: 9999;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.25);
+}
+
+.music-btn:hover{
+    transform: translateY(-4px) scale(1.08);
+
+    background: rgba(82, 183, 136, 0.35);
+
+    box-shadow:
+        0 12px 25px rgba(82,183,136,0.35);
+}
+
+.music-btn:active{
+    transform: scale(0.95);
+}
+
+.music-btn.playing{
+    background: #52b788;
+
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+    0%{
+        box-shadow:
+        0 0 0 0 rgba(82,183,136,0.6);
+    }
+
+    70%{
+        box-shadow:
+        0 0 0 15px rgba(82,183,136,0);
+    }
+
+    100%{
+        box-shadow:
+        0 0 0 0 rgba(82,183,136,0);
+    }
+}
+nav{
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+
+    background: rgba(11, 37, 29, 0.95);
+
+    backdrop-filter: blur(10px);
+}
+html{
+    scroll-behavior: smooth;
+}
+.hidden{
+    opacity:0;
+    transform:translateY(50px);
+
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+}
+
+.show{
+    opacity:1;
+    transform:translateY(0);
+}
+#loader{
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:#081c15;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+}
+.spinner{
+    width:60px;
+    height:60px;
+
+    border:5px solid #ffffff20;
+
+    border-top:5px solid #52b788;
+
+    border-radius:50%;
+
+    animation:spin 1s linear infinite;
+}
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+}
+nav a.active{
+    color:#52b788;
 }

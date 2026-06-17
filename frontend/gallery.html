@@ -12,6 +12,11 @@
 </head>
 
 <body>
+    <div id="loader">
+
+    <div class="spinner"></div>
+
+</div>
 
     <!-- Navbar -->
 
@@ -23,11 +28,13 @@
 
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Gear</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
+            <li><a href="gallery.html" class="active">Gallery</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="gear.html">Gear</a></li>
+            <li><a href="contact.html">Contact</a></li>
+<button id="musicBtn" class="music-btn">
+    🎵
+</button>        </ul>
 
     </nav>
 
@@ -79,22 +86,56 @@
 
     </section>
 
-    <script src="js/gallery.js"></script>
-
+    
     <div id="photoModal" class="modal">
-
-    <div class="modal-content">
-
-        <span class="close-btn">&times;</span>
-
-        <img id="modalImage">
-
-        <h2 id="modalTitle"></h2>
-
-        <p>
-            <strong>Location:</strong>
-            <span id="modalLocation"></span>
-        </p>
+        
+        <div class="modal-content">
+            
+            <span class="close-btn">&times;</span>
+            
+            <img id="modalImage">
+            
+            <h2 id="modalTitle"></h2>
+            
+            <p>
+                <strong>Location:</strong>
+                <span id="modalLocation"></span>
+            </p>
+            
+            <p>
+                <strong>Camera:</strong>
+                <span id="modalCamera"></span>
+            </p>
+            
+            <p>
+                <strong>Lens:</strong>
+                <span id="modalLens"></span>
+            </p>
+            
+            <p>
+                <strong>Settings:</strong>
+                <span id="modalSettings"></span>
+            </p>
+            
+            <p id="modalDescription"></p>
+            
+        </div>
+        
+    </div>
+    <div id="photoModal" class="modal">
+        
+        <div class="modal-content">
+            
+            <span class="close-btn">&times;</span>
+            
+            <img id="modalImage">
+            
+            <h2 id="modalTitle"></h2>
+            
+            <p>
+                <strong>Location:</strong>
+                <span id="modalLocation"></span>
+            </p>
 
         <p>
             <strong>Camera:</strong>
@@ -105,42 +146,7 @@
             <strong>Lens:</strong>
             <span id="modalLens"></span>
         </p>
-
-        <p>
-            <strong>Settings:</strong>
-            <span id="modalSettings"></span>
-        </p>
-
-        <p id="modalDescription"></p>
-
-    </div>
-
-</div>
-<div id="photoModal" class="modal">
-
-    <div class="modal-content">
-
-        <span class="close-btn">&times;</span>
-
-        <img id="modalImage">
-
-        <h2 id="modalTitle"></h2>
-
-        <p>
-            <strong>Location:</strong>
-            <span id="modalLocation"></span>
-        </p>
-
-        <p>
-            <strong>Camera:</strong>
-            <span id="modalCamera"></span>
-        </p>
-
-        <p>
-            <strong>Lens:</strong>
-            <span id="modalLens"></span>
-        </p>
-
+        
         <p>
             <strong>Settings:</strong>
             <span id="modalSettings"></span>
@@ -152,5 +158,31 @@
 
 </div>
 
+    
+<footer>
+
+    <h3>Rachith VC</h3>
+
+    <p>
+        Wildlife Photographer &
+        Nature Storyteller
+    </p>
+
+    <div class="social-links">
+
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Email</a>
+
+    </div>
+
+</footer>
+<audio id="bgMusic" loop>
+    <source src="audio/nature.mp3" type="audio/mpeg">
+</audio>
+<script src="js/gallery.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/animations.js"></script>
 </body>
 </html>
