@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <section class="admin-container">
+
+        <h1>Upload Wildlife Photo</h1>
+
+        <form id="uploadForm">
+
+            <input
+                type="text"
+                id="title"
+                placeholder="Photo Title"
+                required
+            >
+
+            <input
+                type="text"
+                id="category"
+                placeholder="Category"
+                required
+            >
+
+            <input
+                type="text"
+                id="location"
+                placeholder="Location"
+            >
+
+            <input
+                type="text"
+                id="camera"
+                placeholder="Camera"
+            >
+
+            <input
+                type="text"
+                id="lens"
+                placeholder="Lens"
+            >
+
+            <input
+                type="text"
+                id="settings"
+                placeholder="Settings"
+            >
+
+            <textarea
+                id="description"
+                placeholder="Description"
+            ></textarea>
+
+            <input
+                type="file"
+                id="image"
+                required
+            >
+
+            <button type="submit">
+                Upload Photo
+            </button>
+
+        </form>
+<h2>Manage Photos</h2>
+
+<div id="photoList"></div>
+        <p id="message"></p>
+
+    </section>
+
+    <script src="js/admin.js"></script>
+<button onclick="logout()">
+    Logout
+</button>
+</body>
+</html>

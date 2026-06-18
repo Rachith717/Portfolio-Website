@@ -543,3 +543,20 @@ html{
 nav a.active{
     color:#52b788;
 }
+.admin-container{
+    max-width:700px;
+    margin:50px auto;
+    padding:30px;
+}
+
+.admin-container form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.admin-container input,
+.admin-container textarea{
+    padding:12px;
+    border-radius:8px;
+}

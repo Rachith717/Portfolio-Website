@@ -1,0 +1,29 @@
+<h2>Admin Login</h2>
+
+<input type="password" id="password">
+<button onclick="login()">Login</button>
+
+<script>
+function login() {
+
+    const password =
+    document.getElementById("password").value;
+
+    if(password === "tanish9") {
+
+        localStorage.setItem(
+            "adminLoggedIn",
+            "true"
+        );
+
+        window.location.href =
+        "admin.html";
+
+    } else {
+
+        alert("Wrong password");
+
+    }
+
+}
+</script>

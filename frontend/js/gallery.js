@@ -1,128 +1,203 @@
-const photos = [
-    {
-        id: 1,
-        title: "Kingfisher",
-        category: "birds",
-        image: "images/bird1.jpeg",
-        location: "Ranganathittu",
-        camera: "Canon R7",
-        lens: "RF 100-400mm",
-        settings: "f/5.6 | 1/1600 | ISO 400",
-        description: "A kingfisher perched above the water waiting for prey."
-    },
-    {
-        id: 2,
-        title: "Tiger",
-        category: "mammals",
-        image: "images/tiger.jpeg",
-        location: "Kabini",
-        camera: "Canon R7",
-        lens: "RF 100-400mm",
-        settings: "f/7.1 | 1/1000 | ISO 800",
-        description: "A tiger crossing the forest trail during sunrise."
-    },
-    {
-        id: 3,
-        title: "Elephant",
-        category: "mammals",
-        image: "images/elephant.jpg",
-        location: "Bandipur",
-        camera: "Canon R7",
-        lens: "RF 100-400mm",
-        settings: "f/8 | 1/800 | ISO 500",
-        description: "A large elephant feeding near a water source."
-    }
-];
+// Global Photos Array
+let photos = [];
 
 // Gallery Container
-const galleryGrid = document.getElementById("gallery-grid");
+const galleryGrid =
+document.getElementById("gallery-grid");
 
 // Modal Elements
-const modal = document.getElementById("photoModal");
-const modalImage = document.getElementById("modalImage");
-const modalTitle = document.getElementById("modalTitle");
-const modalLocation = document.getElementById("modalLocation");
-const modalCamera = document.getElementById("modalCamera");
-const modalLens = document.getElementById("modalLens");
-const modalSettings = document.getElementById("modalSettings");
-const modalDescription = document.getElementById("modalDescription");
-const closeBtn = document.querySelector(".close-btn");
+const modal =
+document.getElementById("photoModal");
+
+const modalImage =
+document.getElementById("modalImage");
+
+const modalTitle =
+document.getElementById("modalTitle");
+
+const modalLocation =
+document.getElementById("modalLocation");
+
+const modalCamera =
+document.getElementById("modalCamera");
+
+const modalLens =
+document.getElementById("modalLens");
+
+const modalSettings =
+document.getElementById("modalSettings");
+
+const modalDescription =
+document.getElementById("modalDescription");
+
+const closeBtn =
+document.querySelector(".close-btn");
+
+// Load Photos From Backend
+async function loadPhotos() {
+
+    try {
+
+        const response =
+        await fetch(
+            "http://localhost:5000/api/photos"
+        );
+
+        photos =
+        await response.json();
+
+        console.log("Photos Loaded:");
+        photos.forEach(photo => {
+    console.log(
+        photo.title,
+        "=>",
+        photo.category
+    );
+});
+        displayPhotos(photos);
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Error Loading Photos:",
+            error
+        );
+
+    }
+
+}
 
 // Display Photos
 function displayPhotos(photoArray) {
+
     galleryGrid.innerHTML = "";
 
     photoArray.forEach(photo => {
+
         galleryGrid.innerHTML += `
-            <div class="photo-card" onclick="openModal(${photo.id})">
 
-                <img src="${photo.image}" alt="${photo.title}">
+        <div class="photo-card"
+             onclick="openModal(${photo.id})">
 
-                <div class="photo-info">
-                    <h3>${photo.title}</h3>
-                </div>
+            <img
+                src="${photo.image_url}"
+                alt="${photo.title}"
+            >
+
+            <div class="photo-info">
+
+                <h3>
+                    ${photo.title || "Untitled"}
+                </h3>
 
             </div>
+
+        </div>
+
         `;
+
     });
+
 }
 
-// Initial Load
-displayPhotos(photos);
-
 // Filter Buttons
-const buttons = document.querySelectorAll(".filter-btn");
+const buttons =
+document.querySelectorAll(".filter-btn");
 
 buttons.forEach(button => {
+
     button.addEventListener("click", () => {
 
         buttons.forEach(btn => {
+
             btn.classList.remove("active");
+
         });
 
         button.classList.add("active");
 
-        const category = button.dataset.category;
+        const category =
+        button.dataset.category;
+        console.log("Selected:", category);
+console.log(photos);
 
-        if (category === "all") {
+        if(category === "all") {
+
             displayPhotos(photos);
             return;
+
         }
 
-        const filteredPhotos = photos.filter(photo =>
+        const filteredPhotos =
+        photos.filter(photo =>
             photo.category === category
         );
 
         displayPhotos(filteredPhotos);
+
     });
+
 });
 
 // Open Modal
 function openModal(id) {
 
-    const photo = photos.find(photo => photo.id === id);
+    const photo =
+    photos.find(
+        photo => photo.id === id
+    );
 
-    if (!photo) return;
+    if(!photo) return;
 
-    modalImage.src = photo.image;
-    modalTitle.textContent = photo.title;
-    modalLocation.textContent = photo.location;
-    modalCamera.textContent = photo.camera;
-    modalLens.textContent = photo.lens;
-    modalSettings.textContent = photo.settings;
-    modalDescription.textContent = photo.description;
+    modalImage.src =
+    photo.image_url;
+
+    modalTitle.textContent =
+    photo.title || "Untitled";
+
+    modalLocation.textContent =
+    photo.location || "N/A";
+
+    modalCamera.textContent =
+    photo.camera || "N/A";
+
+    modalLens.textContent =
+    photo.lens || "N/A";
+
+    modalSettings.textContent =
+    photo.settings || "N/A";
+
+    modalDescription.textContent =
+    photo.description ||
+    "No description available.";
 
     modal.style.display = "flex";
+
 }
 
 // Close Button
-closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
+if(closeBtn){
+
+    closeBtn.addEventListener("click", () => {
+
+        modal.style.display = "none";
+
+    });
+
+}
+
+// Close Modal When Clicking Outside
+window.addEventListener("click", (e) => {
+
+    if(e.target === modal) {
+
+        modal.style.display = "none";
+
+    }
+
 });
 
-// Click Outside Modal
-window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-        modal.style.display = "none";
-    }
-});
+// Load Photos When Page Opens
+loadPhotos();
