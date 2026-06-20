@@ -1,6 +1,6 @@
 // Global Photos Array Storage
 let photos = [];
-const API_URL = "http://localhost:5000/api";
+const API_URL = " https://portfolio-website-6d58.onrender.com/api";
 
 // DOM Elements
 const galleryGrid = document.getElementById("gallery-grid");

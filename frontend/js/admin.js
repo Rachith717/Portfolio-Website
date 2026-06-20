@@ -2,7 +2,7 @@ if (localStorage.getItem("adminLoggedIn") !== "true") {
     window.location.href = "login.html";
 }
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = " https://portfolio-website-6d58.onrender.com/api";
 const uploadForm = document.getElementById("upload-form");
 const logoutBtn = document.getElementById("logout-btn");
 
