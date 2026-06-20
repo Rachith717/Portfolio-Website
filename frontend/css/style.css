@@ -675,3 +675,223 @@ nav a.active{
     from { opacity: 0; }
     to { opacity: 1; }
 }
+/* ==========================================
+   PREMIUM WILDLIFE GRID SYSTEM
+   ========================================== */
+#gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Card Container Fixes */
+.gallery-item.card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1e1e1e;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    aspect-ratio: 4 / 3; /* Keeps all portfolio slots completely uniform */
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                box-shadow 0.3s ease;
+}
+
+.gallery-item.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Force Image inside bounding boxes */
+.gallery-item.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Prevents raw image distortion or stretching */
+    transition: transform 0.5s ease;
+}
+
+.gallery-item.card:hover img {
+    transform: scale(1.05); /* Soft premium natural zoom on hover */
+}
+
+/* Overlay Details Styling */
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+    padding: 24px 16px 16px 16px;
+    color: #ffffff;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gallery-item.card:hover .gallery-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.gallery-overlay h4 {
+    margin: 0 0 6px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.gallery-overlay p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #cccccc;
+}
+
+/* ==========================================
+   FULL-SIZE LIGHTBOX OVERLAY FIXED SYSTEM
+   ========================================== */
+#lightbox-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.98); /* Deep dark background to make the photo pop */
+    display: none; /* Controlled dynamically via JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Forces modal to float above headers and navigation menus */
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#lightbox-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Lightbox Bounding Container */
+.modal-content {
+    background: #141414;
+    border: 1px solid #262626;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: row;
+    width: 92%;
+    max-width: 1250px;
+    height: 85vh;
+    max-height: 800px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* Left Canvas Display Slot (Crucial for uncropped viewing) */
+.modal-media-frame {
+    flex: 1.4;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.modal-media-frame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* CRITICAL: Prevents your photo from being cropped or cut off! */
+    border-radius: 4px;
+}
+
+/* Right Metadata Sidebar Panel */
+.modal-sidebar-info {
+    flex: 0.8;
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    color: #e5e5e5;
+    border-left: 1px solid #262626;
+    background: #161616;
+    overflow-y: auto;
+}
+
+#modal-title {
+    margin: 0 0 8px 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+#modal-location {
+    font-size: 0.9rem;
+    color: #999999;
+    margin-bottom: 24px;
+}
+
+#modal-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #b3b3b3;
+    margin-bottom: auto; /* Pushes the camera specs grid neatly to the bottom */
+}
+
+/* EXIF Sub-Grid Layout */
+.exif-spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    border-top: 1px solid #262626;
+    padding-top: 24px;
+    margin-top: 20px;
+}
+
+.exif-spec-grid span {
+    font-size: 0.85rem;
+    color: #cccccc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.exif-spec-grid i {
+    color: #22c55e; /* Premium subtle forest green icon color accent */
+    width: 16px;
+}
+
+/* Top-Right Dismiss Toggle Button */
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10000;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close-modal:hover {
+    color: #ef4444;
+    transform: scale(1.1);
+}
+
+/* Clean Responsive Adaptations for Smaller Displays */
+@media (max-width: 850px) {
+    .modal-content {
+        flex-direction: column;
+        height: 90vh;
+    }
+    .modal-media-frame {
+        flex: 1;
+    }
+    .modal-sidebar-info {
+        flex: 1;
+        padding: 20px;
+        border-left: none;
+        border-top: 1px solid #262626;
+    }
+}

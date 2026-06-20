@@ -1,215 +1,69 @@
-if (
-    localStorage.getItem(
-        "adminLoggedIn"
-    ) !== "true"
-) {
-    window.location.href =
-    "login.html";
+if (localStorage.getItem("adminLoggedIn") !== "true") {
+    window.location.href = "login.html";
 }
-const form = document.getElementById("uploadForm");
-const message = document.getElementById("message");
-const photoList = document.getElementById("photoList");
 
-// Upload Photo
-form.addEventListener("submit", async (e) => {
+const API_URL = "http://localhost:5000/api";
+const uploadForm = document.getElementById("upload-form");
+const logoutBtn = document.getElementById("logout-btn");
 
-    e.preventDefault();
+if (uploadForm) {
+    uploadForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = uploadForm.querySelector("button[type='submit']");
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Uploading to Habitat Buckets...";
 
-    const formData = new FormData();
+        // Collect exact files and data references matching structural DB schema keys
+        const fileInput = document.getElementById("photo-file");
+        const formData = new FormData();
 
-    formData.append("title",
-        document.getElementById("title").value);
+        if (fileInput.files.length === 0) {
+            alert("Please pick a capture element before executing sync routines.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
 
-    formData.append("category",
-        document.getElementById("category").value);
+        formData.append("image", fileInput.files[0]);
+        formData.append("title", document.getElementById("photo-title").value);
+        formData.append("description", document.getElementById("photo-desc").value);
+        formData.append("category", document.getElementById("photo-category").value);
+        formData.append("camera", document.getElementById("photo-camera").value);
+        formData.append("lens", document.getElementById("photo-lens").value);
+        formData.append("shutter", document.getElementById("photo-shutter").value);
+        formData.append("aperture", document.getElementById("photo-aperture").value);
+        formData.append("iso", document.getElementById("photo-iso").value);
+        formData.append("location", document.getElementById("photo-location").value);
 
-    formData.append("location",
-        document.getElementById("location").value);
-
-    formData.append("camera",
-        document.getElementById("camera").value);
-
-    formData.append("lens",
-        document.getElementById("lens").value);
-
-    formData.append("settings",
-        document.getElementById("settings").value);
-
-    formData.append("description",
-        document.getElementById("description").value);
-
-    formData.append("image",
-        document.getElementById("image").files[0]);
-
-    try {
-
-        const response = await fetch(
-            "http://localhost:5000/api/upload",
-            {
+        try {
+            const response = await fetch(`${API_URL}/upload`, {
                 method: "POST",
                 body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Photograph deployed live cleanly onto the main portfolio matrix!");
+                uploadForm.reset();
+            } else {
+                alert(`Upload Sequence Aborted: ${result.error}`);
             }
-        );
-
-        const data = await response.json();
-
-        console.log(data);
-
-        message.textContent =
-            "Photo uploaded successfully!";
-
-        form.reset();
-
-        loadPhotos();
-
-    } catch (error) {
-
-        console.error(error);
-
-        message.textContent =
-            "Upload failed.";
-
-    }
-
-});
-
-// Load Photos
-async function loadPhotos() {
-
-    try {
-
-        const response = await fetch(
-            "http://localhost:5000/api/photos"
-        );
-
-        const photos = await response.json();
-
-        photoList.innerHTML = "";
-
-        photos.forEach(photo => {
-
-            photoList.innerHTML += `
-
-            <div class="admin-photo">
-
-                <img
-                    src="${photo.image_url}"
-                    width="250"
-                >
-
-                <h3>
-                    ${photo.title || "Untitled"}
-                </h3>
-
-                <p>
-                    Category:
-                    ${photo.category || "None"}
-                </p>
-
-                <button
-                    onclick="editPhoto(${photo.id})">
-                    Edit
-                </button>
-
-                <button
-                    onclick="deletePhoto(${photo.id})">
-                    Delete
-                </button>
-
-            </div>
-
-            <hr>
-
-            `;
-
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
+        } catch (error) {
+            console.error("Networking breakdown:", error);
+            alert("Server distribution network timed out.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
 }
 
-// Edit Photo
-async function editPhoto(id) {
-
-    const title =
-        prompt("Enter new title");
-
-    if (!title) return;
-
-    try {
-
-        const response = await fetch(
-            `http://localhost:5000/api/photos/${id}`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-                body: JSON.stringify({
-                    title: title
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        console.log(data);
-
-        loadPhotos();
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("adminLoggedIn");
+        window.location.href = "login.html";
+    });
 }
-
-// Delete Photo
-async function deletePhoto(id) {
-
-    const confirmDelete =
-        confirm("Delete this photo?");
-
-    if (!confirmDelete) return;
-
-    try {
-
-        const response = await fetch(
-            `http://localhost:5000/api/photos/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
-
-        const data =
-            await response.json();
-
-        console.log(data);
-
-        loadPhotos();
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-function logout() {
-
-    localStorage.removeItem(
-        "adminLoggedIn"
-    );
-
-    window.location.href =
-    "login.html";
-
-}
-// Initial Load
-loadPhotos();

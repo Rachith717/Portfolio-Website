@@ -197,5 +197,22 @@
     <source src="audio/click.mp3" type="audio/mpeg">
 </audio>
 <script src="js/main.js"></script>
+<div id="lightbox-modal" class="lightbox">
+    <button class="close-modal" aria-label="Close Preview">&times;</button>
+    <div class="modal-content">
+        <div class="modal-media-frame">
+            <img id="modal-img" src="" alt="Full size preview viewport" />
+        </div>
+        
+        <div class="modal-sidebar-info">
+            <h3 id="modal-title"></h3>
+            <div id="modal-location"></div>
+            <p id="modal-desc"></p>
+            
+            <div class="exif-spec-grid" id="modal-specs">
+                </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

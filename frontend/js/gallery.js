@@ -1,203 +1,105 @@
-// Global Photos Array
+// Global Photos Array Storage
 let photos = [];
+const API_URL = "http://localhost:5000/api";
 
-// Gallery Container
-const galleryGrid =
-document.getElementById("gallery-grid");
+// DOM Elements
+const galleryGrid = document.getElementById("gallery-grid");
+const categoryButtons = document.querySelectorAll(".filter-btn");
 
-// Modal Elements
-const modal =
-document.getElementById("photoModal");
+// Lightbox Modal DOM Elements
+const modal = document.getElementById("lightbox-modal");
+const modalImg = document.getElementById("modal-img");
+const modalTitle = document.getElementById("modal-title");
+const modalDesc = document.getElementById("modal-desc");
+const modalLocation = document.getElementById("modal-location");
+const modalSpecs = document.getElementById("modal-specs");
+const closeModalBtn = document.querySelector(".close-modal");
 
-const modalImage =
-document.getElementById("modalImage");
-
-const modalTitle =
-document.getElementById("modalTitle");
-
-const modalLocation =
-document.getElementById("modalLocation");
-
-const modalCamera =
-document.getElementById("modalCamera");
-
-const modalLens =
-document.getElementById("modalLens");
-
-const modalSettings =
-document.getElementById("modalSettings");
-
-const modalDescription =
-document.getElementById("modalDescription");
-
-const closeBtn =
-document.querySelector(".close-btn");
-
-// Load Photos From Backend
-async function loadPhotos() {
-
+// Fetch active entries from Express Service layer
+async function fetchPhotos() {
     try {
-
-        const response =
-        await fetch(
-            "http://localhost:5000/api/photos"
-        );
-
-        photos =
-        await response.json();
-
-        console.log("Photos Loaded:");
-        photos.forEach(photo => {
-    console.log(
-        photo.title,
-        "=>",
-        photo.category
-    );
-});
-        displayPhotos(photos);
-
+        galleryGrid.innerHTML = `<div class="loading">Tracking wildlife archive items...</div>`;
+        const response = await fetch(`${API_URL}/photos`);
+        if (!response.ok) throw new Error("Could not pull digital photography catalog.");
+        photos = await response.ok ? await response.json() : [];
+        renderGallery(photos);
+    } catch (err) {
+        console.error(err);
+        galleryGrid.innerHTML = `<div class="error">Failed to synchronize photography logs. Try reloading your local server instance.</div>`;
     }
-
-    catch(error) {
-
-        console.error(
-            "Error Loading Photos:",
-            error
-        );
-
-    }
-
 }
 
-// Display Photos
-function displayPhotos(photoArray) {
-
+// Generate UI Cards
+function renderGallery(items) {
     galleryGrid.innerHTML = "";
-
-    photoArray.forEach(photo => {
-
-        galleryGrid.innerHTML += `
-
-        <div class="photo-card"
-             onclick="openModal(${photo.id})">
-
-            <img
-                src="${photo.image_url}"
-                alt="${photo.title}"
-            >
-
-            <div class="photo-info">
-
-                <h3>
-                    ${photo.title || "Untitled"}
-                </h3>
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-// Filter Buttons
-const buttons =
-document.querySelectorAll(".filter-btn");
-
-buttons.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        buttons.forEach(btn => {
-
-            btn.classList.remove("active");
-
-        });
-
-        button.classList.add("active");
-
-        const category =
-        button.dataset.category;
-        console.log("Selected:", category);
-console.log(photos);
-
-        if(category === "all") {
-
-            displayPhotos(photos);
-            return;
-
-        }
-
-        const filteredPhotos =
-        photos.filter(photo =>
-            photo.category === category
-        );
-
-        displayPhotos(filteredPhotos);
-
-    });
-
-});
-
-// Open Modal
-function openModal(id) {
-
-    const photo =
-    photos.find(
-        photo => photo.id === id
-    );
-
-    if(!photo) return;
-
-    modalImage.src =
-    photo.image_url;
-
-    modalTitle.textContent =
-    photo.title || "Untitled";
-
-    modalLocation.textContent =
-    photo.location || "N/A";
-
-    modalCamera.textContent =
-    photo.camera || "N/A";
-
-    modalLens.textContent =
-    photo.lens || "N/A";
-
-    modalSettings.textContent =
-    photo.settings || "N/A";
-
-    modalDescription.textContent =
-    photo.description ||
-    "No description available.";
-
-    modal.style.display = "flex";
-
-}
-
-// Close Button
-if(closeBtn){
-
-    closeBtn.addEventListener("click", () => {
-
-        modal.style.display = "none";
-
-    });
-
-}
-
-// Close Modal When Clicking Outside
-window.addEventListener("click", (e) => {
-
-    if(e.target === modal) {
-
-        modal.style.display = "none";
-
+    if (items.length === 0) {
+        galleryGrid.innerHTML = `<div class="empty-state">No wildlife prints found inside this section.</div>`;
+        return;
     }
 
+    items.forEach((photo) => {
+        const itemCard = document.createElement("div");
+        itemCard.className = "gallery-item card";
+        itemCard.innerHTML = `
+            <img src="${photo.image_url}" alt="${photo.title}" loading="lazy" />
+            <div class="gallery-overlay">
+                <h4>${photo.title}</h4>
+                <p><i class="fas fa-map-marker-alt"></i> ${photo.location || "Wild Environment"}</p>
+            </div>
+        `;
+        itemCard.addEventListener("click", () => triggerLightbox(photo));
+        galleryGrid.appendChild(itemCard);
+    });
+}
+
+// Triggers full screen lightbox on image card action
+function triggerLightbox(photo) {
+    const modal = document.getElementById("lightbox-modal");
+    const modalImg = document.getElementById("modal-img");
+    const modalTitle = document.getElementById("modal-title");
+    const modalDesc = document.getElementById("modal-desc");
+    const modalLocation = document.getElementById("modal-location");
+    const modalSpecs = document.getElementById("modal-specs");
+
+    // Map properties fetched cleanly from your Supabase database
+    modalImg.src = photo.image_url;
+    modalTitle.textContent = photo.title;
+    modalDesc.textContent = photo.description || "No specific log notes taken for this snapshot instance.";
+    modalLocation.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${photo.location || "Natural Habitat Location Unknown"}`;
+    
+    // Mount the wildlife photography camera gear specifications dynamically
+    modalSpecs.innerHTML = `
+        <span><i class="fas fa-camera"></i> ${photo.camera_body || "N/A"}</span>
+        <span><i class="fas fa-lens"></i> ${photo.lens || "N/A"}</span>
+        <span><i class="fas fa-clock"></i> ${photo.shutter_speed || "N/A"}</span>
+        <span><i class="fas fa-adjust"></i> ${photo.aperture || "N/A"}</span>
+        <span><i class="fas fa-sliders-h"></i> ISO ${photo.iso || "Auto"}</span>
+    `;
+    
+    // Reveal full display frame safely
+    modal.classList.add("active");
+}
+
+// Global Event Listener to close modal on background click or close action button
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("lightbox-modal");
+    const closeBtn = document.querySelector(".close-modal");
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            modal.classList.remove("active");
+        });
+    }
+
+    // Dismiss the frame instantly if clicking on the shaded dark overlay area background
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("active");
+            }
+        });
+    }
 });
 
-// Load Photos When Page Opens
-loadPhotos();
+// Run Core Thread on Load initialization
+document.addEventListener("DOMContentLoaded", fetchPhotos);

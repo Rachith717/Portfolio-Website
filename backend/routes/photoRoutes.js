@@ -1,140 +1,60 @@
 const express = require("express");
 const router = express.Router();
-
 const supabase = require("../config/supabase");
 
-/* =========================
-   GET ALL PHOTOS
-========================= */
+/* ==========================================
+   GET ALL PHOTOS (With Optional Category Filter)
+   ========================================== */
 router.get("/", async (req, res) => {
-
     try {
-
-        const { data, error } = await supabase
-            .from("photos")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
-
-        if (error) {
-            return res.status(500).json(error);
+        let query = supabase.from("photos").select("*");
+        
+        // Filter by category if explicitly passed as a query string parameter
+        if (req.query.category && req.query.category !== "all") {
+            query = query.eq("category", req.query.category);
         }
+        
+        const { data, error } = await query.order("created_at", { ascending: false });
 
-        res.json(data);
-
-    } catch (err) {
-
-        res.status(500).json({
-            error: err.message
-        });
-
+        if (error) throw error;
+        return res.status(200).json(data);
+    } catch (error) {
+        console.error("Get Photos Error:", error.message);
+        return res.status(500).json({ error: error.message });
     }
-
 });
 
-/* =========================
-   GET SINGLE PHOTO
-========================= */
-router.get("/:id", async (req, res) => {
-
+/* ==========================================
+   DELETE PHOTO (Administrative Option)
+   ========================================== */
+router.delete("/:id", async (req, res) => {
     try {
+        const { id } = req.params;
 
-        const id = req.params.id;
-
-        const { data, error } = await supabase
+        // Fetch image payload link first to clean storage bucket too if necessary
+        const { data: photoData, error: fetchError } = await supabase
             .from("photos")
-            .select("*")
+            .select("image_url")
             .eq("id", id)
             .single();
 
-        if (error) {
-            return res.status(500).json(error);
+        if (fetchError || !photoData) {
+            return res.status(404).json({ error: "Photo entry not found." });
         }
 
-        res.json(data);
-
-    } catch (err) {
-
-        res.status(500).json({
-            error: err.message
-        });
-
-    }
-
-});
-
-/* =========================
-   UPDATE PHOTO
-========================= */
-router.put("/:id", async (req, res) => {
-
-    try {
-
-        const id = req.params.id;
-
-        console.log("ID:", id);
-        console.log("BODY:", req.body);
-
-        const { title } = req.body;
-
-        const { data, error } = await supabase
-            .from("photos")
-            .update({
-                title: title
-            })
-            .eq("id", id)
-            .select();
-
-        console.log("DATA:", data);
-        console.log("ERROR:", error);
-
-        if (error) {
-            return res.status(500).json(error);
-        }
-
-        res.json(data);
-
-    } catch (err) {
-
-        res.status(500).json({
-            error: err.message
-        });
-
-    }
-
-});
-
-/* =========================
-   DELETE PHOTO
-========================= */
-router.delete("/:id", async (req, res) => {
-
-    try {
-
-        const id = req.params.id;
-
-        const { error } = await supabase
+        // Delete row item from database
+        const { error: dbDeleteError } = await supabase
             .from("photos")
             .delete()
             .eq("id", id);
 
-        if (error) {
-            return res.status(500).json(error);
-        }
+        if (dbDeleteError) throw dbDeleteError;
 
-        res.json({
-            message: "Photo deleted successfully"
-        });
-
-    } catch (err) {
-
-        res.status(500).json({
-            error: err.message
-        });
-
+        return res.status(200).json({ message: "Photo entry deleted cleanly." });
+    } catch (error) {
+        console.error("Delete Photo Error:", error.message);
+        return res.status(500).json({ error: error.message });
     }
-
 });
 
 module.exports = router;
