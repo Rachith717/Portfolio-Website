@@ -20,7 +20,8 @@ app.get("/", (req, res) => {
 });
 
 // Port Execution Binding
+// Ensure this block is at the bottom of backend/server.js
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server actively distributing portfolio requests on port ${PORT}`);
 });
